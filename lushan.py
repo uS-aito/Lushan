@@ -8,6 +8,7 @@ import aes_cipher
 class aeon_card_scraping:
 	url = "http://www.aeon.co.jp/creditcard/"
 	DRIVER_PATH = os.path.join(os.path.dirname(__file__),"chromedriver")
+	cipher = aes_cipher("test")
 
 	def start(self):
 		browser = webdriver.Chrome(self.DRIVER_PATH)
