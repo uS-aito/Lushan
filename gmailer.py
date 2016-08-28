@@ -43,7 +43,7 @@ class gmailer(object):
 				msg = email.message_from_string(raw_email.decode("utf-8"))
 				msg_encoding = "UTF-8" #email.Header.decode_header(msg.get('Subject'))[0][1] or 'iso-2022-jp'
 				msg = email.message_from_string(raw_email.decode(msg_encoding))
-				#print msg.keys()
+				print msg.keys()
 
 				try:
 					fromObj = email.Header.decode_header(msg.get("From"))
@@ -62,6 +62,11 @@ class gmailer(object):
 				except:
 					date = ""
 				tmp.append(date)
+				try:
+					content_type_obj = email.Header.decode_header(msg.get("Content-Type"))
+					tmp.append(content_type_obj)
+				except:
+					tmp.append("")
 				result_list.append(tmp)
 			except:
 				"ERROR: Message encode error"
@@ -74,8 +79,8 @@ class gmailer(object):
 		raw_email = d[0][1]
 		try:
 			msg = email.message_from_string(raw_email.decode("utf-8"))
-			msg_encoding = "utf-8" #email.Header.decode_header(msg.get('Subject'))[0][1] or 'iso-2022-jp'
-			msg = email.message_from_string(raw_email.decode(msg_encoding))
+			msg_encoding = email.Header.decode_header(msg.get('Subject'))[0][1] or 'iso-2022-jp'
+			msg = email.message_from_string(raw_email.decode("iso-2022-jp"))
 		except:
 			"ERROR: Message encode error"
 			return ""
@@ -102,13 +107,15 @@ class gmailer(object):
 		self.gmail.logout()
 
 if __name__ == "__main__":
+	import quopri
 	gm = gmailer()
 	try:
 		gm.get_inbox()
 		gm.get_unseen()
-		header_list = gm.get_mailheaders()
+		header_list = gm.get_mailheaders(num=1)
 		print "getbody"
-		print gm.get_body(9651)
+		body = gm.get_body(9651)
+		print quopri.decodestring(body).decode("iso-2022-jp")
 	finally:
 		print "gm close"
 		gm.close()
