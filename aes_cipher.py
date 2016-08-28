@@ -1,3 +1,4 @@
+#coding: utf-8
 import base64
 import hashlib
 from Crypto import Random
@@ -29,16 +30,16 @@ class AESCipher(object):
 	def __unpad(self, s):
 		return s[:-ord(s[len(s)-1:])]
 	
-	def write_pass(self):
+	def write_pass(self,fname="id-pass.txt"):
 		sys.stdout.write("ID: ")
 		id = self.__encrypt(raw_input())
 		ps = self.__encrypt(getpass())
-		with open("id-pass.txt","w") as wfp:
+		with open(fname,"w") as wfp:
 			wfp.write(id+"\n")
 			wfp.write(ps+"\n")
 
-	def read_pass(self):
-		with open("id-pass.txt","r") as rfp:
+	def read_pass(self,fname="id-pass.txt"):
+		with open(fname,"r") as rfp:
 			id = self.__decrypt(rfp.readline())
 			ps = self.__decrypt(rfp.readline())
 		return (id,ps)
@@ -46,7 +47,13 @@ class AESCipher(object):
 if __name__ == "__main__":
 	sys.stdout.write("Master ")
 	aesc = AESCipher(getpass())
-	aesc.write_pass()
-	id, ps = aesc.read_pass()
+	
+	sys.stdout.write("Input id-pass file name[id-pass.txt]")
+	fname = raw_input()
+	if fname == "":
+		fname="id-pass.txt"
+
+	aesc.write_pass(fname)
+	id, ps = aesc.read_pass(fname)
 	print id
 	print ps
